@@ -1,0 +1,18 @@
+{
+    "name": "pico_weather_data_collector",
+    "version": "1.0.0",
+    "description": "A mqtt subscriber to get weather data from the RPI pico w",
+    "license": "GPL-3.0-or-later",
+    "author": "ljn0099",
+    "type": "commonjs",
+    "main": "server.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "dependencies": {
+        "dotenv": "^16.4.7",
+        "luxon": "^3.6.1",
+        "mqtt": "^5.10.4",
+        "pg": "^8.14.1"
+    }
+}
