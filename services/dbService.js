@@ -118,10 +118,10 @@ class DBService {
         CASE WHEN COUNT(wind_speed) > 0 THEN AVG(wind_speed) ELSE NULL END AS avg_wind_speed,
         CASE WHEN COUNT(wind_speed) > 0 THEN STDDEV_POP(wind_speed) ELSE NULL END AS standard_deviation_speed,
         CASE WHEN COUNT(wind_direction) > 0 THEN
-          (360 + DEGREES(ATAN2(
-            AVG(SIN(RADIANS(wind_direction))),
-            AVG(COS(RADIANS(wind_direction)))
-          ))::NUMERIC % 360)
+        MOD(
+            CAST(DEGREES(ATAN2(SUM(SIN(RADIANS(wind_direction))), SUM(COS(RADIANS(wind_direction))))) + 360.0 AS numeric),
+            CAST(360.0 AS numeric)
+        )
         ELSE NULL END AS avg_wind_direction,
         CASE WHEN COUNT(lux) > 0 THEN AVG(lux) ELSE NULL END AS avg_lux,
         CASE WHEN COUNT(uvi) > 0 THEN AVG(uvi) ELSE NULL END AS avg_uvi,
@@ -197,15 +197,15 @@ class DBService {
         try {
             // Convert the input UTC timestamp to Madrid timezone day boundaries
             const query = `
-            WITH madrid_day_range AS (
-                SELECT 
-                    date_trunc('day', $2::timestamptz AT TIME ZONE 'Europe/Madrid') AT TIME ZONE 'Europe/Madrid' AS day_start_madrid,
-                    (date_trunc('day', $2::timestamptz AT TIME ZONE 'Europe/Madrid') + interval '1 day' - interval '1 second') AT TIME ZONE 'Europe/Madrid' AS day_end_madrid
+        WITH madrid_day_range AS (
+            SELECT
+                date_trunc('day', $2::timestamptz AT TIME ZONE 'Europe/Madrid') AS day_start_madrid,
+                date_trunc('day', $2::timestamptz AT TIME ZONE 'Europe/Madrid') + interval '1 day' - interval '1 second' AS day_end_madrid
             ),
             day_range AS (
-                SELECT 
-                    (SELECT day_start_madrid FROM madrid_day_range) AT TIME ZONE 'UTC' AS day_start_utc,
-                    (SELECT day_end_madrid FROM madrid_day_range) AT TIME ZONE 'UTC' AS day_end_utc,
+                SELECT
+                    (SELECT day_start_madrid FROM madrid_day_range) AT TIME ZONE 'Europe/Madrid' AT TIME ZONE 'UTC' AS day_start_utc,
+                    (SELECT day_end_madrid FROM madrid_day_range) AT TIME ZONE 'Europe/Madrid' AT TIME ZONE 'UTC' AS day_end_utc,
                     (SELECT day_start_madrid FROM madrid_day_range)::date AS madrid_date
             ),
             day_data AS (
@@ -236,10 +236,10 @@ class DBService {
                     CASE WHEN COUNT(wind_speed) > 0 THEN STDDEV_POP(wind_speed) ELSE NULL END AS standard_deviation_speed,
                     CASE WHEN COUNT(wind_speed) > 0 THEN AVG(wind_speed) ELSE NULL END AS avg_wind_speed,
                     CASE WHEN COUNT(wind_direction) > 0 THEN
-                        (360 + DEGREES(ATAN2(
-                            AVG(SIN(RADIANS(wind_direction))),
-                            AVG(COS(RADIANS(wind_direction)))
-                        ))::NUMERIC % 360)
+                    MOD(
+                        CAST(DEGREES(ATAN2(SUM(SIN(RADIANS(wind_direction))), SUM(COS(RADIANS(wind_direction))))) + 360.0 AS numeric),
+                        CAST(360.0 AS numeric)
+                    )
                     ELSE NULL END AS avg_wind_direction,
                     MAX(uvi) FILTER (WHERE uvi IS NOT NULL) AS max_uvi,
                     MAX(lux) FILTER (WHERE lux IS NOT NULL) AS max_lux,
