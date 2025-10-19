@@ -1,6 +1,5 @@
 #include <inttypes.h>
 #include <libpq-fe.h>
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 
