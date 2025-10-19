@@ -67,5 +67,5 @@ target_link_libraries(weather_handlers
     PUBLIC
     ${PROTOBUF_LIBRARIES}
     PRIVATE
-    ${POSTGRESQL_LIBRARIES}
+    ${PostgreSQL_LIBRARIES}
 )
