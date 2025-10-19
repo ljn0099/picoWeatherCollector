@@ -1,5 +1,5 @@
 # Stage 1 builder
-FROM alpine:3.22 AS builder
+FROM docker.io/library/alpine:3.22 AS builder
 
 RUN apk add --no-cache \
     build-base \
@@ -20,7 +20,7 @@ COPY CMakeLists.txt .
 RUN mkdir build && cd build && cmake .. && make -j$(nproc)
 
 # Stage 2 runtime
-FROM eclipse-mosquitto:2-openssl
+FROM docker.io/library/eclipse-mosquitto:2-openssl
 
 RUN apk add --no-cache \
     libpq \
