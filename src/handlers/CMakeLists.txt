@@ -59,7 +59,7 @@ target_include_directories(weather_handlers
     ${GENERATED_DIR}               # generated files
     ${PROTOBUF_INCLUDE_DIRS}       # protobuf headers (wrappers.proto)
     PRIVATE
-    ${POSTGRESQL_INCLUDE_DIRS}
+    ${PostgreSQL_INCLUDE_DIRS}
 )
 
 # Link against protobuf-c library

@@ -67,7 +67,7 @@ void *worker(void *arg) {
 }
 
 bool init_thread_pool(struct mosquitto_opt *options, int optionsCount) {
-    int numThreads;
+    int numThreads = 0;
     for (int i = 0; i < optionsCount; i++) {
         if (strcmp(options[i].key, "num_threads") == 0)
             numThreads = atoi(options[i].value);
