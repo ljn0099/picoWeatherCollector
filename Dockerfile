@@ -25,11 +25,15 @@ FROM docker.io/library/eclipse-mosquitto:2-openssl
 RUN apk add --no-cache \
     libpq \
     libsodium \
-    protobuf-c \
-    bash
+    protobuf-c
 
 RUN mkdir -p /usr/lib/mosquitto/plugins/
 COPY --from=builder /picoWeatherCollector/build/picoWeatherCollector.so /usr/lib/mosquitto/plugins/
 RUN chown mosquitto:mosquitto /usr/lib/mosquitto/plugins/picoWeatherCollector.so
 
 COPY mosquitto.conf /mosquitto/config/mosquitto.conf
+
+COPY picoWeatherCollector.sh /picoWeatherCollector.sh
+RUN chmod +x /picoWeatherCollector.sh
+
+CMD ["/picoWeatherCollector.sh"]
