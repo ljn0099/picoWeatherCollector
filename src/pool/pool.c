@@ -109,11 +109,11 @@ void free_thread_pool(void) {
     TaskQueue *q = &pool.queue;
 
     pthread_mutex_lock(&q->mutex);
+    q->shutdown = 1;
+    pthread_cond_broadcast(&q->cond);
     while (q->taskCount > 0) {
         pthread_cond_wait(&q->done, &q->mutex);
     }
-    q->shutdown = 1;
-    pthread_cond_broadcast(&q->cond);
     pthread_mutex_unlock(&q->mutex);
 
     for (int i = 0; i < pool.numThreads; i++) {
@@ -137,6 +137,12 @@ bool add_task(void (*function)(void *), void *arg) {
     task->next = NULL;
 
     pthread_mutex_lock(&q->mutex);
+    if (q->shutdown) {
+        pthread_mutex_unlock(&q->mutex);
+        free(task);
+        return false; // pool closing/closed
+    }
+
     if (q->rear == NULL) {
         q->front = q->rear = task;
     }
