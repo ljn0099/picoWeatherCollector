@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 project(picoWeatherCollector C)
 
-set(CMAKE_C_STANDARD 99)
+set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -19,7 +19,5 @@ find_package(PostgreSQL REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(MOSQUITTO REQUIRED libmosquitto)
 pkg_check_modules(SODIUM REQUIRED libsodium)
-pkg_check_modules(PROTOBUF REQUIRED libprotobuf-c)
-find_program(PROTOC_EXECUTABLE protoc)
 
 add_subdirectory(src)

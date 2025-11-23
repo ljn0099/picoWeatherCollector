@@ -6,15 +6,16 @@ RUN apk add --no-cache \
     cmake \
     pkgconf \
     protobuf-dev \
-    protobuf-c-dev \
-    protobuf-c-compiler \
     libpq-dev \
     libsodium-dev \
-    mosquitto-dev
+    mosquitto-dev \
+    python3 \
+    py3-protobuf
 
 WORKDIR /picoWeatherCollector
 
 COPY src ./src
+COPY nanopb ./nanopb
 COPY CMakeLists.txt .
 
 RUN mkdir build && cd build && cmake .. && make -j$(nproc)
@@ -24,8 +25,7 @@ FROM docker.io/library/eclipse-mosquitto:2-openssl
 
 RUN apk add --no-cache \
     libpq \
-    libsodium \
-    protobuf-c
+    libsodium
 
 RUN mkdir -p /usr/lib/mosquitto/plugins/
 COPY --from=builder /picoWeatherCollector/build/picoWeatherCollector.so /usr/lib/mosquitto/plugins/
