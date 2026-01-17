@@ -34,8 +34,7 @@ static int auth_callback(int event, void *eventData, void *userData) {
 
   mosquitto_log_printf(
       MOSQ_LOG_INFO,
-      "[WEATHER_COLLECTOR] Auth callback: username=%s password=%s", username,
-      password);
+      "[WEATHER_COLLECTOR] Auth callback: username=%s ", username);
 
   PGconn *conn = get_conn();
   if (!conn)
@@ -90,9 +89,6 @@ int message_callback(int event, void *eventData, void *userData) {
   size_t payloadLen = msg->payloadlen;
   msgType_t msgType = MSG_NULL;
 
-  if (payloadLen > MAX_PAYLOAD)
-    return MOSQ_ERR_UNKNOWN;
-
   const size_t expectedLen = 9 + UUID_LEN + 5; // stations/ + uuid + /data
   size_t len = strlen(topic);
 
@@ -103,6 +99,9 @@ int message_callback(int event, void *eventData, void *userData) {
   }
 
   if (msgType == MSG_NULL)
+    return MOSQ_ERR_SUCCESS;
+
+  if (payloadLen > MAX_PAYLOAD)
     return MOSQ_ERR_UNKNOWN;
 
   // Create the task
