@@ -1,13 +1,9 @@
-# Authentication
+# MQTT Authentication
 
-- **Username:** `<station_uuid>`  
+- **Username:** `<station_uuid>`
 - **Password:** `<api_key>`
 
----
-
 # MQTT Topics
-
-Weather data from each weather station should be published to the following topic:
 
 The station can publish in all topics that have the `stations/<station_uuid>/` prefix. Where:
 
@@ -104,8 +100,8 @@ for better accuracy.
 
 It is used as a mosquitto plugin using the plugin api version 5.
 
-It communicates with the picoWeatherDB using libpq and authenticates the stations hashing the api key password and
-checking it against the database for that station.
+It communicates with the picoWeatherDB using libpq and authenticates the stations hashing the api key and
+checking it against the station UUID.
 
 The decoding of the messagese is done by the [nanobp](github.com/nanopb/nanopb) library, and it uses a pool of threads
 and a message queue for not blocking the main mosquitto thread, it also uses a pool of psql connections to the database
@@ -130,14 +126,14 @@ listener 1883
 ```
 
 Where:
-`plugin /usr/lib/mosquitto/plugins/picoWeatherCollector.so` is the location where the plugin was installed by the Dockerfile
-`plugin_opt_db_host <host>` host where the database is.
-`plugin_opt_db_user <user>` user for the database
-`plugin_opt_db_pass <pass>` password for the database
-`plugin_opt_db_name <name>` database name
-`plugin_opt_db_port <port>` database port
-`plugin_opt_max_db_conn <number>` number of threads to create for the database pool
-`plugin_opt_num_threads <number>` number of threads to create for the message decoding
+- `plugin /usr/lib/mosquitto/plugins/picoWeatherCollector.so` is the location where the plugin was installed by the Dockerfile
+- `plugin_opt_db_host <host>` host where the database is.
+- `plugin_opt_db_user <user>` user for the database
+- `plugin_opt_db_pass <pass>` password for the database
+- `plugin_opt_db_name <name>` database name
+- `plugin_opt_db_port <port>` database port
+- `plugin_opt_max_db_conn <number>` number of threads to create for the database pool
+- `plugin_opt_num_threads <number>` number of threads to create for the message decoding
 
 # Project server
 
